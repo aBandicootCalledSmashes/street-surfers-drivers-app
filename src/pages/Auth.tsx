@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import MapBackground from '@/components/MapBackground';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle, MapPin, ShieldCheck } from 'lucide-react';
+import logo from '@/assets/logo.webp';
 
 // Validation schema
 const loginSchema = z.object({
@@ -79,40 +80,48 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background relative flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background relative flex flex-col items-center justify-start p-4 pt-12">
       {/* Map background overlay */}
       <MapBackground />
 
-      {/* Login card */}
-      <div className="relative z-10 w-full max-w-md">
-        {/* Card with subtle elevation and glow */}
-        <div className="bg-card/90 backdrop-blur-sm border border-border/50 rounded-2xl p-8 shadow-2xl shadow-primary/5">
-          {/* Logo section */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center mb-4">
-              <span className="text-3xl font-bold tracking-tight">
-                <span className="text-foreground">STREET</span>
-                <span className="text-primary"> SURFERS</span>
-              </span>
-            </div>
-            <p className="text-muted-foreground text-sm uppercase tracking-widest">
-              South Side Shuttles
-            </p>
-          </div>
+      {/* Content container */}
+      <div className="relative z-10 w-full max-w-md flex flex-col items-center">
+        {/* Logo */}
+        <div className="mb-6">
+          <img 
+            src={logo} 
+            alt="Street Surfers - South Side Shuttles" 
+            className="h-20 w-auto"
+          />
+        </div>
 
-          {/* Headline */}
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-foreground mb-2">
-              Driver Sign In
-            </h1>
-            <p className="text-muted-foreground text-sm">
-              Access your assigned trips and routes
-            </p>
-          </div>
+        {/* Welcome headline */}
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold text-foreground italic mb-2">
+            Welcome Back
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            Sign in to manage your rides
+          </p>
+        </div>
 
+        {/* Feature badges */}
+        <div className="flex gap-3 mb-8">
+          <div className="flex items-center gap-2 bg-secondary/50 px-4 py-2 rounded-full border border-border/50">
+            <MapPin className="h-4 w-4 text-primary" />
+            <span className="text-sm text-foreground">Live Tracking</span>
+          </div>
+          <div className="flex items-center gap-2 bg-secondary/50 px-4 py-2 rounded-full border border-border/50">
+            <ShieldCheck className="h-4 w-4 text-primary" />
+            <span className="text-sm text-foreground">Safe Rides</span>
+          </div>
+        </div>
+
+        {/* Login card */}
+        <div className="w-full bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl p-6 shadow-2xl shadow-primary/5">
           {/* Error message */}
           {error && (
-            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/30 rounded-lg flex items-start gap-3">
+            <div className="mb-5 p-4 bg-destructive/10 border border-destructive/30 rounded-lg flex items-start gap-3">
               <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
               <p className="text-sm text-destructive">{error}</p>
             </div>
@@ -127,10 +136,10 @@ const Auth = () => {
               <Input
                 id="email"
                 type="email"
-                placeholder="driver@streetsurfers.com"
+                placeholder="you@company.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-14 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50"
+                className="h-14 bg-secondary/60 border-border text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 rounded-xl"
                 disabled={isLoading}
                 autoComplete="email"
               />
@@ -143,10 +152,10 @@ const Auth = () => {
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-14 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50"
+                className="h-14 bg-secondary/60 border-border text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 rounded-xl"
                 disabled={isLoading}
                 autoComplete="current-password"
               />
@@ -155,7 +164,7 @@ const Auth = () => {
             <Button
               type="submit"
               variant="action"
-              className="w-full glow-primary"
+              className="w-full h-14 text-lg font-semibold glow-primary rounded-full mt-2"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -168,22 +177,15 @@ const Auth = () => {
               )}
             </Button>
           </form>
-
-          {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-muted-foreground text-xs">
-              Driver accounts are created by operations.
-            </p>
-            <p className="text-muted-foreground text-xs mt-1">
-              Contact your dispatcher for access.
-            </p>
-          </div>
         </div>
 
-        {/* Brand watermark */}
-        <div className="text-center mt-6">
-          <p className="text-muted-foreground/50 text-xs uppercase tracking-widest">
-            Driver Operations Portal
+        {/* Footer */}
+        <div className="mt-8 text-center">
+          <p className="text-muted-foreground text-xs">
+            Driver accounts are created by operations.
+          </p>
+          <p className="text-muted-foreground text-xs mt-1">
+            Contact your dispatcher for access.
           </p>
         </div>
       </div>
