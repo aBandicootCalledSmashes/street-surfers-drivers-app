@@ -109,6 +109,7 @@ export default function Profile() {
           onToggle={handleOnlineToggle}
           isTracking={isTracking}
           locationError={locationError}
+          hasActiveTrip={false}
         />
 
         {/* Profile Photo & Name */}

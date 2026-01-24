@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Phone, MessageCircle, UserCheck, UserX, XCircle, CheckCircle2, Loader2, ChevronDown, ChevronUp, Users, Navigation, MapPin, ExternalLink } from 'lucide-react';
+import { Phone, MessageCircle, UserCheck, UserX, XCircle, CheckCircle2, ChevronDown, ChevronUp, Users, Navigation, MapPin, ExternalLink, GraduationCap, Briefcase, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from './ConfirmDialog';
 import { Passenger, PassengerStatus, TripStatus, TripType } from '@/types/trip';
@@ -95,6 +95,30 @@ export function PassengerCard({
     return tripType === 'inbound' ? 'Pickup Address' : 'Drop-off Address';
   };
 
+  // Passenger type badge (Scholar vs Staff)
+  const getPassengerTypeBadge = () => {
+    const isScholar = passenger.passengerType === 'scholar';
+    return (
+      <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide ${
+        isScholar 
+          ? 'bg-warning/20 text-warning border border-warning/30' 
+          : 'bg-primary/20 text-primary border border-primary/30'
+      }`}>
+        {isScholar ? (
+          <>
+            <GraduationCap className="w-3 h-3" />
+            <span>Scholar</span>
+          </>
+        ) : (
+          <>
+            <Briefcase className="w-3 h-3" />
+            <span>Staff</span>
+          </>
+        )}
+      </div>
+    );
+  };
+
   const getStatusBadge = () => {
     // Show "En route" badge if this is active pickup passenger
     if (isActivePickup && passenger.status === 'pending') {
@@ -142,10 +166,13 @@ export function PassengerCard({
 
   const availableActions = getAvailableActions();
   const passengerAddress = getPassengerAddress();
+  const isScholar = passenger.passengerType === 'scholar';
 
-  // Card highlight for active pickup
+  // Card highlight for active pickup and scholars
   const cardClasses = isActivePickup && passenger.status === 'pending'
-    ? 'bg-card border-2 border-primary/50 rounded-xl overflow-hidden shadow-lg shadow-primary/10'
+    ? `bg-card border-2 rounded-xl overflow-hidden shadow-lg ${
+        isScholar ? 'border-warning/50 shadow-warning/10' : 'border-primary/50 shadow-primary/10'
+      }`
     : 'bg-card border border-border rounded-xl overflow-hidden';
 
   return (
@@ -159,18 +186,23 @@ export function PassengerCard({
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
               isActivePickup && passenger.status === 'pending' 
-                ? 'bg-primary/20 border border-primary/40' 
+                ? isScholar 
+                  ? 'bg-warning/20 border border-warning/40' 
+                  : 'bg-primary/20 border border-primary/40'
                 : 'bg-secondary'
             }`}>
               {isActivePickup && passenger.status === 'pending' ? (
-                <Navigation className="w-5 h-5 text-primary" />
+                <Navigation className={`w-5 h-5 ${isScholar ? 'text-warning' : 'text-primary'}`} />
+              ) : isScholar ? (
+                <GraduationCap className="w-5 h-5 text-warning" />
               ) : (
-                <Users className="w-5 h-5 text-muted-foreground" />
+                <Briefcase className="w-5 h-5 text-primary" />
               )}
             </div>
             <div className="text-left">
               <div className="flex items-center gap-2">
                 <p className="font-semibold text-foreground">{passenger.name}</p>
+                {getPassengerTypeBadge()}
               </div>
               <p className="text-sm text-muted-foreground">{passenger.count} passenger{passenger.count > 1 ? 's' : ''}</p>
             </div>
@@ -187,16 +219,55 @@ export function PassengerCard({
         {/* Expanded content */}
         {isExpanded && (
           <div className="border-t border-border p-4 space-y-4 animate-slide-up">
-            {/* Address section */}
+            {/* Address section with confirmation */}
             <div className="bg-secondary/50 rounded-lg p-3">
               <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-primary uppercase tracking-wide mb-1">{getAddressLabel()}</p>
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="text-xs font-semibold text-primary uppercase tracking-wide">{getAddressLabel()}</p>
+                    {passenger.addressConfirmed ? (
+                      <span className="flex items-center gap-1 text-xs text-success">
+                        <ShieldCheck className="w-3 h-3" />
+                        Confirmed
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1 text-xs text-warning">
+                        <AlertTriangle className="w-3 h-3" />
+                        Unconfirmed
+                      </span>
+                    )}
+                  </div>
                   <p className="text-sm text-foreground">{passengerAddress}</p>
                 </div>
               </div>
             </div>
+
+            {/* Guardian info for scholars (read-only) */}
+            {isScholar && passenger.guardian && (
+              <div className="bg-warning/10 border border-warning/20 rounded-lg p-3">
+                <p className="text-xs font-semibold text-warning uppercase tracking-wide mb-2 flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3" />
+                  Emergency Contact
+                </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{passenger.guardian.name}</p>
+                    {passenger.guardian.relationship && (
+                      <p className="text-xs text-muted-foreground">{passenger.guardian.relationship}</p>
+                    )}
+                  </div>
+                  <a 
+                    href={`tel:${passenger.guardian.phone}`}
+                    className="flex items-center gap-2 px-3 py-2 bg-warning/20 rounded-lg text-warning font-medium text-sm active:scale-95 transition-transform"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Phone className="w-4 h-4" />
+                    Call Guardian
+                  </a>
+                </div>
+              </div>
+            )}
 
             {/* Navigate button */}
             {passenger.status === 'pending' && passengerAddress && (
@@ -301,18 +372,22 @@ export function PassengerCard({
           title={
             confirmAction === 'picked_up' ? 'Confirm Pickup' :
             confirmAction === 'dropped_off' ? 'Confirm Drop-off' :
-            confirmAction === 'failed_pickup' ? 'No Show' : 'Cancel Passenger'
+            confirmAction === 'failed_pickup' ? 'Mark No-Show' : 'Cancel Passenger'
           }
           description={
             confirmAction === 'picked_up' ? `Mark ${passenger.name} as picked up?` :
             confirmAction === 'dropped_off' ? `Mark ${passenger.name} as dropped off?` :
-            confirmAction === 'failed_pickup' ? `${passenger.name} was not present at pickup?` :
+            confirmAction === 'failed_pickup' ? (
+              isScholar 
+                ? `${passenger.name} (Scholar) was not present. This will be logged and escalated to dispatch.`
+                : `${passenger.name} was not present at pickup location. This will be logged with timestamp and GPS.`
+            ) :
             `Cancel ${passenger.name} from this trip?`
           }
           confirmLabel={
             confirmAction === 'picked_up' ? 'Yes, Picked Up' :
             confirmAction === 'dropped_off' ? 'Yes, Dropped Off' :
-            confirmAction === 'failed_pickup' ? 'Confirm No Show' : 'Yes, Cancel'
+            confirmAction === 'failed_pickup' ? 'Confirm No-Show' : 'Yes, Cancel'
           }
           onConfirm={handleAction}
           variant={confirmAction === 'cancelled' ? 'destructive' : confirmAction === 'failed_pickup' ? 'warning' : 'default'}

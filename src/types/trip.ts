@@ -8,12 +8,20 @@ export type TripStatus =
 
 export type TripType = 'inbound' | 'outbound';
 
+export type PassengerType = 'scholar' | 'staff';
+
 export type PassengerStatus = 
   | 'pending'
   | 'picked_up'
   | 'dropped_off'
   | 'failed_pickup'
   | 'cancelled';
+
+export interface Guardian {
+  name: string;
+  phone: string;
+  relationship?: string;
+}
 
 export interface Passenger {
   id: string;
@@ -22,6 +30,10 @@ export interface Passenger {
   count: number;
   status: PassengerStatus;
   statusUpdatedAt?: string;
+  // Passenger type for visual identification
+  passengerType: PassengerType;
+  // Guardian info for scholars (read-only for drivers)
+  guardian?: Guardian;
   // For inbound trips: passenger's home address (pickup)
   // For outbound trips: passenger's home address (dropoff)
   homeAddress: string;
@@ -29,6 +41,8 @@ export interface Passenger {
     lat: number;
     lng: number;
   };
+  // Address confirmation
+  addressConfirmed?: boolean;
 }
 
 export interface Location {
