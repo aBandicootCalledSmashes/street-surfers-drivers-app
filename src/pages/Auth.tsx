@@ -87,12 +87,19 @@ const Auth = () => {
       {/* Content container */}
       <div className="relative z-10 w-full max-w-md flex flex-col items-center">
         {/* Logo */}
-        <div className="mb-6">
+        <div className="mb-4">
           <img 
             src={logo} 
             alt="Street Surfers - South Side Shuttles" 
             className="h-20 w-auto"
           />
+        </div>
+
+        {/* Driver App label */}
+        <div className="mb-6">
+          <span className="px-4 py-1.5 bg-primary/20 text-primary font-semibold text-sm uppercase tracking-widest rounded-full border border-primary/30">
+            Driver App
+          </span>
         </div>
 
         {/* Welcome headline */}
