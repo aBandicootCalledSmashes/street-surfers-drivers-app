@@ -1,4 +1,4 @@
-import { MapPin, Clock, Users, ChevronRight, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
+import { MapPin, Clock, Users, ChevronRight, ArrowDownLeft, ArrowUpRight, GraduationCap, Briefcase } from 'lucide-react';
 import { Trip } from '@/types/trip';
 import { format } from 'date-fns';
 
@@ -10,6 +10,10 @@ interface TripCardProps {
 
 export function TripCard({ trip, onClick, isActive }: TripCardProps) {
   const scheduledTime = new Date(trip.scheduledTime);
+
+  // Count passenger types
+  const scholarCount = trip.passengers.filter(p => p.passengerType === 'scholar').length;
+  const staffCount = trip.passengers.filter(p => p.passengerType === 'staff').length;
 
   const getTripTypeBadge = () => {
     const isInbound = trip.tripType === 'inbound';
@@ -89,11 +93,26 @@ export function TripCard({ trip, onClick, isActive }: TripCardProps) {
         </div>
       </div>
 
-      <div className="flex items-center gap-4 mt-5 pt-4 border-t border-border">
+      <div className="flex items-center gap-3 mt-5 pt-4 border-t border-border flex-wrap">
         <div className="flex items-center gap-2">
           <Users className="w-5 h-5 text-muted-foreground" />
-          <span className="text-base">{trip.passengers.length} passenger{trip.passengers.length !== 1 ? 's' : ''}</span>
+          <span className="text-base">{trip.passengers.length}</span>
         </div>
+        
+        {/* Passenger type breakdown */}
+        {scholarCount > 0 && (
+          <div className="flex items-center gap-1 px-2 py-0.5 bg-warning/10 rounded-full">
+            <GraduationCap className="w-3.5 h-3.5 text-warning" />
+            <span className="text-xs font-semibold text-warning">{scholarCount}</span>
+          </div>
+        )}
+        {staffCount > 0 && (
+          <div className="flex items-center gap-1 px-2 py-0.5 bg-primary/10 rounded-full">
+            <Briefcase className="w-3.5 h-3.5 text-primary" />
+            <span className="text-xs font-semibold text-primary">{staffCount}</span>
+          </div>
+        )}
+
         <span className="text-muted-foreground">•</span>
         <span className="text-base font-medium truncate">
           {trip.passengers[0]?.name}{trip.passengers.length > 1 ? ` +${trip.passengers.length - 1}` : ''}
