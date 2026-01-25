@@ -18,6 +18,8 @@ export interface Profile {
   is_online: boolean;
   dispatcher_name: string | null;
   dispatcher_phone: string | null;
+  driver_code: string | null;
+  assigned_depot: string | null;
   created_at: string;
   updated_at: string;
 }
