@@ -54,9 +54,11 @@ export type Database = {
       }
       profiles: {
         Row: {
+          assigned_depot: string | null
           created_at: string
           dispatcher_name: string | null
           dispatcher_phone: string | null
+          driver_code: string | null
           email: string | null
           id: string
           is_online: boolean
@@ -72,9 +74,11 @@ export type Database = {
           vehicle_model: string | null
         }
         Insert: {
+          assigned_depot?: string | null
           created_at?: string
           dispatcher_name?: string | null
           dispatcher_phone?: string | null
+          driver_code?: string | null
           email?: string | null
           id?: string
           is_online?: boolean
@@ -90,9 +94,11 @@ export type Database = {
           vehicle_model?: string | null
         }
         Update: {
+          assigned_depot?: string | null
           created_at?: string
           dispatcher_name?: string | null
           dispatcher_phone?: string | null
+          driver_code?: string | null
           email?: string | null
           id?: string
           is_online?: boolean
@@ -182,6 +188,59 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      vehicles: {
+        Row: {
+          capacity: number
+          color: string | null
+          created_at: string
+          driver_id: string
+          id: string
+          is_active: boolean
+          license_plate: string
+          make: string
+          model: string
+          updated_at: string
+          vehicle_type: string
+          verified_by_admin: boolean
+        }
+        Insert: {
+          capacity?: number
+          color?: string | null
+          created_at?: string
+          driver_id: string
+          id?: string
+          is_active?: boolean
+          license_plate: string
+          make: string
+          model: string
+          updated_at?: string
+          vehicle_type?: string
+          verified_by_admin?: boolean
+        }
+        Update: {
+          capacity?: number
+          color?: string | null
+          created_at?: string
+          driver_id?: string
+          id?: string
+          is_active?: boolean
+          license_plate?: string
+          make?: string
+          model?: string
+          updated_at?: string
+          vehicle_type?: string
+          verified_by_admin?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicles_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
